@@ -1,6 +1,7 @@
 import sqlite3 as sq
 from weapons_info import weapons_array
-
+from armor_info import armor_array
+from gear_info import gear_array
 
 def create_database():
     print("Create DB")
@@ -54,8 +55,7 @@ def create_database():
         CREATE TABLE IF NOT EXISTS Gear (
             Category TEXT NOT NULL,
             Name TEXT PRIMARY KEY,
-            Cost TEXT NOT NULL,
-            Description TEXT NULL
+            Cost TEXT NOT NULL
         )
         """
     )
@@ -68,8 +68,6 @@ def create_database():
             Name TEXT NOT NULL,
             Surgery TEXT NOT NULL,
             ID CODE PRIMARY KEY,
-            Description TEXT NOT NULL,
-            Details TEXT NOT NULL,
             Cost TEXT NOT NULL,
             HLoss TEXT NULL
         )
@@ -86,21 +84,6 @@ def fill_bodyarmor_table():
     conn = sq.connect("cyberpunk2020.db")
     cursor = conn.cursor()
 
-    armor_array = [
-        ["Cloth, leather√", "Arms, Torso, possibly legs", 0, 0, "Varies"],
-        ["Heavy leather", "Arms, Torso, possibly legs", 4, 0, "50.00"],
-        ["Kevlar T-Shirt, Vest√", "Torso", 10, 0, "90.00"],
-        ["Steel helmet", "Head", 14, 0, "20.00"],
-        ["Light Armor jacket√", "Torso, Arms", 14, 0, "150.00"],
-        ["Med Armor jacked√", "Torso, Arms", 18, 1, "200.00"],
-        ["Flack vest", "Torso", 20, 1, "200.00"],
-        ["Flack pants", "Legs", 20, 1, "200.00"],
-        ["Nylon helmet", "Head", 20, 0, "100.00"],
-        ["Heavy Armor jacket√", "Torso, Arms", 20, 2, "250.00"],
-        ["Door Gunner's vest", "Torso", 25, 3, "250.00"],
-        ["MetalGear™", "Whole Body", 25, 2, "600.000"],
-    ]
-
     # Insert the 2D array into the BodyArmor table
     for row in armor_array:
         try:
@@ -115,7 +98,6 @@ def fill_bodyarmor_table():
 
     # Commit the changes
     conn.commit()
-
 
 def fill_weapons_table():
     conn = sq.connect("cyberpunk2020.db")
@@ -136,14 +118,25 @@ def fill_weapons_table():
     # Commit the changes
     conn.commit()
 
-
 def fill_gear_table():
-    """
-    Category TEXT NOT NULL,
-    Name TEXT PRIMARY KEY,
-    Cost TEXT NOT NULL,
-    Description TEXT NULL
-    """
+    conn = sq.connect("cyberpunk2020.db")
+    cursor = conn.cursor()
+
+    print('Gear List')
+    # Insert the 2D array into the BodyArmor table
+    for row in gear_array:
+        try:
+            cursor.execute(
+                "INSERT OR IGNORE INTO Gear (Category, Name, Cost) VALUES (?, ?, ?)",
+                row,
+            )
+        except sq.IntegrityError as e:
+            print(f"IntegrityError: {e} - for row: {row}")
+        except sq.Error as e:
+            print(f"SQLite error: {e} - for row: {row}")
+
+    # Commit the changes
+    conn.commit()
 
 
 def main():
@@ -151,6 +144,7 @@ def main():
     create_database()
     fill_bodyarmor_table()
     fill_weapons_table()
+    fill_gear_table()
 
 
 if __name__ == "__main__":
