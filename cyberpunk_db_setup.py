@@ -1,8 +1,9 @@
 import sqlite3 as sq
-from weapons_info import weapons_array
-from armor_info import armor_array
-from gear_info import gear_array
-from cyberware_info import cyberware_array
+import info
+import info.armor_info
+import info.cyberware_info
+import info.gear_info
+import info.weapons_info
 
 def create_database():
     print("Create DB")
@@ -86,7 +87,7 @@ def fill_bodyarmor_table():
     cursor = conn.cursor()
 
     # Insert the 2D array into the BodyArmor table
-    for row in armor_array:
+    for row in info.armor_info.armor_array:
         try:
             cursor.execute(
                 "INSERT OR IGNORE INTO BodyArmor (TypeOfArmor, Covers, SP, EV, Cost) VALUES (?, ?, ?, ?, ?)",
@@ -105,7 +106,7 @@ def fill_weapons_table():
     cursor = conn.cursor()
 
     # Insert the 2D array into the BodyArmor table
-    for row in weapons_array:
+    for row in info.weapons_info.weapons_array:
         try:
             cursor.execute(
                 "INSERT OR IGNORE INTO Weapons (Category, Company, Name, Type, WeaponAccuracy, Concealability, Availability, Damage, Ammo, NumberOfShots, ROF, Reliability, Range, Cost, Description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -125,7 +126,7 @@ def fill_gear_table():
 
     print('Gear List')
     # Insert the 2D array into the BodyArmor table
-    for row in gear_array:
+    for row in info.gear_info.gear_array:
         try:
             cursor.execute(
                 "INSERT OR IGNORE INTO Gear (Category, Name, Cost) VALUES (?, ?, ?)",
@@ -144,7 +145,7 @@ def fill_cyberware_table():
     cursor = conn.cursor()
 
     # Insert the 2D array into the Cyberware table
-    for row in cyberware_array:
+    for row in info.cyberware_info.cyberware_array:
         try:
             cursor.execute(
                 "INSERT OR IGNORE INTO Cyberware (Category, Name, Surgery, ID, Cost, HLoss) VALUES (?, ?, ?, ?, ?, ?)",
