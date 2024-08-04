@@ -2,6 +2,7 @@ import sqlite3 as sq
 from weapons_info import weapons_array
 from armor_info import armor_array
 from gear_info import gear_array
+from cyberware_info import cyberware_array
 
 def create_database():
     print("Create DB")
@@ -138,6 +139,24 @@ def fill_gear_table():
     # Commit the changes
     conn.commit()
 
+def fill_cyberware_table():
+    conn = sq.connect("cyberpunk2020.db")
+    cursor = conn.cursor()
+
+    # Insert the 2D array into the Cyberware table
+    for row in cyberware_array:
+        try:
+            cursor.execute(
+                "INSERT OR IGNORE INTO Cyberware (Category, Name, Surgery, ID, Cost, HLoss) VALUES (?, ?, ?, ?, ?, ?)",
+                row,
+            )
+        except sq.IntegrityError as e:
+            print(f"IntegrityError: {e} - for row: {row}")
+        except sq.Error as e:
+            print(f"SQLite error: {e} - for row: {row}")
+
+    # Commit the changes
+    conn.commit()
 
 def main():
     print("Test")
@@ -145,6 +164,7 @@ def main():
     fill_bodyarmor_table()
     fill_weapons_table()
     fill_gear_table()
+    # fill_cyberware_table() #Table needs to be fixed
 
 
 if __name__ == "__main__":
